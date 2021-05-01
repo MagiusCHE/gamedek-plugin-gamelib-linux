@@ -1,0 +1,2 @@
+# gamelib.linux
+Gamedek plugin
