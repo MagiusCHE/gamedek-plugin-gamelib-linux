@@ -1,8 +1,5 @@
 const fs = require("fs")
-const mkdirp = require('mkdirp')
 const path = require('path')
-const rimraf = require('rimraf')
-const spawn = require("child_process").spawn;
 
 class myplugin extends global.Plugin {
     constructor(root, manifest) {

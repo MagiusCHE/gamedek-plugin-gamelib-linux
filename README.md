@@ -1,2 +1,2 @@
 # gamelib.linux
-Gamedek plugin
+Gamedek plugin for linux game
