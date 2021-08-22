@@ -247,7 +247,7 @@ class myplugin extends global.Plugin {
 
         const securermrf = dir => {
             this.log('rm -rf ' + dir)
-            //rimraf.sync(dir)
+            rimraf.sync(dir)
         }
 
         if (op == 'gu_rmrf_cmd' && fs.existsSync(game.props.executable.executable)) {
