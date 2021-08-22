@@ -295,7 +295,7 @@ class myplugin extends global.Plugin {
                 return false
             }
             if (process.platform == "linux" || process.platform == "darwin") {
-                if (lnxdirs.indexOf(dir.replace(/^\/+|\/+$/g, '')) > -1) {
+                if (lnxdirs.indexOf(dir.replace(/\/+$/g, '')) > -1) {
                     return false
                 }
             }
@@ -308,7 +308,7 @@ class myplugin extends global.Plugin {
                 label: await kernel.translateBlock('${lang.ge_game_dialog_rmrf_cmd_switch} <span class="text-danger">' + todel + '</span>')
             }
         }
-        if ((game.props.executable.workdir + '').replace(/^\/+|\/+$/g, '') != todel.replace(/^\/+|\/+$/g, '')) {
+        if ((game.props.executable.workdir + '').replace(/\/+$/g, '') != todel.replace(/\/+$/g, '')) {
             todel = game.props.executable.workdir
             if (isvaliddir(todel)) {
                 returns.switches.gu_rmrf_cwd = {
