@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require('path')
+const rimraf = require("rimraf")
 
 class myplugin extends global.Plugin {
     constructor(root, manifest) {
@@ -221,6 +222,99 @@ class myplugin extends global.Plugin {
             }
             returns.tab = 'executable'
             returns.item = 'executable'
+        }
+        return returns
+    }
+    async executeUninstallOf(hash, op, provider, returns) {
+        if (!returns) {
+            returns = {}
+        }
+        if (provider != 'gamelib.linux' || returns.success === false) {
+            return returns
+        }
+        const games = await kernel.gameList.getGames()
+        const game = games.find(g => g.hash == hash)
+        if (!game) {
+            returns.error = {
+                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + 'hash' + '" "' + hash + '"}'),
+            }
+            return returns
+        }
+        if (game.provider != 'import.linux') {
+            return returns
+        }
+
+        const securermrf = dir => {
+            this.log('rm -rf ' + dir)
+            //rimraf.sync(dir)
+        }
+
+        if (op == 'gu_rmrf_cmd' && fs.existsSync(game.props.executable.executable)) {
+            securermrf(path.dirname(game.props.executable.executable))
+        }
+        if (op == 'gu_rmrf_cwd' && game.props.executable.workdir && game.props.executable.workdir.trim().length > 0 && fs.existsSync(game.props.executable.workdir)) {
+            securermrf(game.props.executable.workdir)
+        }
+
+        returns.success = true
+    }
+    async querySwitchForUninstall(hash, returns) {
+        if (!returns) {
+            returns = {}
+        }
+        const games = await kernel.gameList.getGames()
+        const game = games.find(g => g.hash == hash)
+        if (!game) {
+            returns.error = {
+                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + 'hash' + '" "' + hash + '"}'),
+            }
+            return returns
+        }
+
+        if (game.provider != 'import.linux') {
+            return returns
+        }
+
+        if (!returns.switches) {
+            returns.switches = {}
+        }
+
+        //saecurelinux dir
+        const lnxdirs = [
+            '/usr/bin',
+            '/usr/sbin',
+            '/bin',
+            '/sbin',
+            '/'
+        ]
+
+        const isvaliddir = function(dir) {
+            if (!dir || dir.length == 0 || !fs.existsSync(dir)) {
+                return false
+            }
+            if (process.platform == "linux" || process.platform == "darwin") {
+                if (lnxdirs.indexOf(dir.replace(/^\/+|\/+$/g, '')) > -1) {
+                    return false
+                }
+            }
+
+            return true
+        }
+        let todel = path.dirname(game.props.executable.executable)
+        if (isvaliddir(todel)) {
+            returns.switches.gu_rmrf_cmd = {
+                label: await kernel.translateBlock('${lang.ge_game_dialog_rmrf_cmd_switch} <span class="text-danger">' + todel + '</span>')
+            }
+        }
+        if ((game.props.executable.workdir + '').replace(/^\/+|\/+$/g, '') != todel.replace(/^\/+|\/+$/g, '')) {
+            todel = game.props.executable.workdir
+            if (isvaliddir(todel)) {
+                returns.switches.gu_rmrf_cwd = {
+                    label: await kernel.translateBlock('${lang.ge_game_dialog_rmrf_cwd_switch} <span class="text-danger">' + todel + '</span>')
+                }
+            }
         }
         return returns
     }

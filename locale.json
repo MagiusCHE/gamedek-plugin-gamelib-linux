@@ -6,7 +6,9 @@
         "ge_il_info_binary": "File to execute",
         "ge_il_info_binary_flabel": "Executable file",
         "ge_il_info_folder": "Working directory",
-        "ge_il_info_arguments": "Arguments"
+        "ge_il_info_arguments": "Arguments",
+        "ge_game_dialog_rmrf_cwd_switch": "Permanetly delete command folder",
+        "ge_game_dialog_rmrf_cmd_switch": "Permanetly delete working folder"
     },
     "it": {
         "ge_import_linux": "un file Eseguibile Linux",
@@ -15,6 +17,8 @@
         "ge_il_info_binary": "File eseguibile",
         "ge_il_info_binary_flabel": "Eseguibile",
         "ge_il_info_folder": "Directory di lavoro",
-        "ge_il_info_arguments": "Argomenti"
+        "ge_il_info_arguments": "Argomenti",
+        "ge_game_dialog_rmrf_cwd_switch": "Rimuovi definitivamente la cartella",
+        "ge_game_dialog_rmrf_cmd_switch": "Rimuovi definitivamente la cartella"
     }
 }
