@@ -246,7 +246,7 @@ class myplugin extends global.Plugin {
         }
 
         const securermrf = dir => {
-            this.log('rm -rf ' + dir)
+            //this.log('rm -rf ' + dir)
             rimraf.sync(dir)
         }
 
