@@ -72,7 +72,7 @@ class myplugin extends global.Plugin {
 
         const args = {
             executable: game.props.executable.executable,
-            env: game.props.system?.env,
+            env: { ...process.env, ...game.props.system?.env },
             detached: true,
             arguments: game.props.executable.arguments,
             cwd: game.props.executable.workdir && game.props.executable.workdir.length > 0 ? game.props.executable.workdir : path.dirname(game.props.executable.executable)
