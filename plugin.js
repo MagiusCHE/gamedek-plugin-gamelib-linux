@@ -60,8 +60,8 @@ class myplugin extends global.Plugin {
         const game = games.find(g => g.hash == hash)
         if (!game) {
             returns.error = {
-                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
-                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + 'hash' + '" "' + hash + '"}'),
+                title: await kernel.translateBlock('${lang.ge_com_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_filenotfound "' + 'hash' + '" "' + hash + '"}'),
             }
             return returns
         }
@@ -72,6 +72,7 @@ class myplugin extends global.Plugin {
 
         const args = {
             executable: game.props.executable.executable,
+            env: game.props.system?.env,
             detached: true,
             arguments: game.props.executable.arguments,
             cwd: game.props.executable.workdir && game.props.executable.workdir.length > 0 ? game.props.executable.workdir : path.dirname(game.props.executable.executable)
@@ -209,16 +210,16 @@ class myplugin extends global.Plugin {
         }
         if (!props.executable.executable) {
             returns.error = {
-                title: await kernel.translateBlock('${lang.ge_com_info_required_title}'),
-                message: await kernel.translateBlock('${lang.ge_com_info_required "' + await kernel.translateBlock('${lang.ge_il_info_binary}') + '"}'),
+                title: await kernel.translateBlock('${lang.ge_com_required_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_required "' + await kernel.translateBlock('${lang.ge_il_info_binary}') + '"}'),
             }
             returns.tab = 'executable'
             returns.item = 'executable'
         }
         if (!fs.existsSync(props.executable.executable) || !fs.statSync(props.executable.executable).isFile()) {
             returns.error = {
-                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
-                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + await kernel.translateBlock('${lang.ge_il_info_binary}') + '" "' + props.executable.executable + '"}'),
+                title: await kernel.translateBlock('${lang.ge_com_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_filenotfound "' + await kernel.translateBlock('${lang.ge_il_info_binary}') + '" "' + props.executable.executable + '"}'),
             }
             returns.tab = 'executable'
             returns.item = 'executable'
@@ -236,8 +237,8 @@ class myplugin extends global.Plugin {
         const game = games.find(g => g.hash == hash)
         if (!game) {
             returns.error = {
-                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
-                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + 'hash' + '" "' + hash + '"}'),
+                title: await kernel.translateBlock('${lang.ge_com_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_filenotfound "' + 'hash' + '" "' + hash + '"}'),
             }
             return returns
         }
@@ -267,8 +268,8 @@ class myplugin extends global.Plugin {
         const game = games.find(g => g.hash == hash)
         if (!game) {
             returns.error = {
-                title: await kernel.translateBlock('${lang.ge_com_info_filenotfound_title}'),
-                message: await kernel.translateBlock('${lang.ge_com_info_filenotfound "' + 'hash' + '" "' + hash + '"}'),
+                title: await kernel.translateBlock('${lang.ge_com_filenotfound_title}'),
+                message: await kernel.translateBlock('${lang.ge_com_filenotfound "' + 'hash' + '" "' + hash + '"}'),
             }
             return returns
         }
