@@ -38,7 +38,8 @@ class myplugin extends global.Plugin {
         }
         await kernel.gameList.setGameStoppedByHash(hash, {
             error: ret?.returns?.exit?.error,
-            std: ret?.returns?.exit?.log,
+            stdcmd: ret?.returns?.exit?.log,
+            stdout: ret?.returns?.exit?.std,
             stderr: ret?.returns?.exit?.err
         })
     }
@@ -82,7 +83,8 @@ class myplugin extends global.Plugin {
         if (ret.error) {
             await kernel.gameList.setGameStoppedByHash(hash, {
                 error: ret.error,
-                std: log.join('\n'),
+                stdcmb: log.join('\n'),
+                stdout: std.join('\n'),
                 stderr: err.join('\n')
             })
         } else {
@@ -224,6 +226,10 @@ class myplugin extends global.Plugin {
             returns.tab = 'executable'
             returns.item = 'executable'
         }
+
+        props.executable.cmdline = `test di prova` + rops.executable.executable
+
+
         return returns
     }
     async executeUninstallOf(hash, op, provider, returns) {
@@ -351,6 +357,24 @@ class myplugin extends global.Plugin {
                 workdir: {
                     type: "folder"
                     , label: await kernel.translateBlock('${lang.ge_il_info_folder}')
+                },
+                cmdline: {
+                    type: "readonly"
+                    , when_oneitemvalue_changed: /*source*/`
+                        if (source && source.attr('id') == 'executable_cmdline')
+                            return
+                        const envs = []
+                        $('#system_env .setting_keyvalue').each(function(){
+                            envs.push($(this).find('.label').val() + '=' + $(this).find('.value').val())
+                        })
+                        let newval =
+                            'cd "' + $('#executable_workdir').val() + '"'
+                            + ' && ' + envs.join(' ')
+                            + ' "' + $('#executable_executable').val() + '"'
+                            + ' ' + $('#executable_arguments').val()
+                        $('#executable_cmdline').val(newval)
+                    `
+                    , label: await kernel.translateBlock('${lang.ge_il_info_cmdline}')
                 }
             }
         }
