@@ -227,9 +227,6 @@ class myplugin extends global.Plugin {
             returns.item = 'executable'
         }
 
-        props.executable.cmdline = `test di prova` + rops.executable.executable
-
-
         return returns
     }
     async executeUninstallOf(hash, op, provider, returns) {
