@@ -1,6 +1,7 @@
 const fs = require("fs")
 const path = require('path')
 const rimraf = require("rimraf")
+const { execFileSync } = require('child_process')
 
 class myplugin extends global.Plugin {
     constructor(root, manifest) {
@@ -218,7 +219,19 @@ class myplugin extends global.Plugin {
             returns.tab = 'executable'
             returns.item = 'executable'
         }
-        if (!fs.existsSync(props.executable.executable) || !fs.statSync(props.executable.executable).isFile()) {
+
+        // Resolve command from PATH if not an absolute path
+        let executablePath = props.executable.executable
+        if (executablePath && !path.isAbsolute(executablePath)) {
+            try {
+                executablePath = execFileSync('which', [executablePath], { encoding: 'utf8' }).trim()
+                props.executable.executable = executablePath
+            } catch (e) {
+                // which failed - file not found in PATH
+            }
+        }
+
+        if (!fs.existsSync(executablePath) || !fs.statSync(executablePath).isFile()) {
             returns.error = {
                 title: await kernel.translateBlock('${lang.ge_com_filenotfound_title}'),
                 message: await kernel.translateBlock('${lang.ge_com_filenotfound "' + await kernel.translateBlock('${lang.ge_il_info_binary}') + '" "' + props.executable.executable + '"}'),
