@@ -72,12 +72,22 @@ class myplugin extends global.Plugin {
             return returns
         }
 
+        // Resolve command from PATH if not an absolute path
+        let executable = game.props.executable.executable
+        if (executable && !path.isAbsolute(executable)) {
+            try {
+                executable = execFileSync('which', [executable], { encoding: 'utf8' }).trim()
+            } catch (e) {
+                // keep original value, spawnBinOrScript will handle the error
+            }
+        }
+
         const args = {
-            executable: game.props.executable.executable,
+            executable: executable,
             env: { ...process.env, ...game.props.system?.env },
             detached: true,
             arguments: game.props.executable.arguments,
-            cwd: game.props.executable.workdir && game.props.executable.workdir.length > 0 ? game.props.executable.workdir : path.dirname(game.props.executable.executable)
+            cwd: game.props.executable.workdir && game.props.executable.workdir.length > 0 ? game.props.executable.workdir : path.dirname(executable)
         }
         const ret = (await kernel.broadcastPluginMethod('fileservice', 'spawnBinOrScript', args)).returns.last
 
@@ -220,12 +230,11 @@ class myplugin extends global.Plugin {
             returns.item = 'executable'
         }
 
-        // Resolve command from PATH if not an absolute path
+        // Resolve command from PATH for validation only, without modifying the user's input
         let executablePath = props.executable.executable
         if (executablePath && !path.isAbsolute(executablePath)) {
             try {
                 executablePath = execFileSync('which', [executablePath], { encoding: 'utf8' }).trim()
-                props.executable.executable = executablePath
             } catch (e) {
                 // which failed - file not found in PATH
             }
