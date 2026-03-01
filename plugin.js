@@ -317,7 +317,7 @@ class myplugin extends global.Plugin {
         ]
 
         const isvaliddir = function(dir) {
-            if (!dir || dir.length == 0 || !fs.existsSync(dir)) {
+            if (!dir || dir.length == 0 || !path.isAbsolute(dir) || !fs.existsSync(dir)) {
                 return false
             }
             if (process.platform == "linux" || process.platform == "darwin") {
