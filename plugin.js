@@ -72,13 +72,22 @@ class myplugin extends global.Plugin {
             return returns
         }
 
-        // Resolve command from PATH if not an absolute path
+        // Resolve command if not an absolute path: first try the Working directory,
+        // then fall back to PATH lookup via `which`.
         let executable = game.props.executable.executable
         if (executable && !path.isAbsolute(executable)) {
-            try {
-                executable = execFileSync('which', [executable], { encoding: 'utf8' }).trim()
-            } catch (e) {
-                // keep original value, spawnBinOrScript will handle the error
+            const workdir = game.props.executable.workdir
+            const workdirCandidate = workdir && workdir.trim().length > 0
+                ? path.resolve(workdir, executable)
+                : null
+            if (workdirCandidate && fs.existsSync(workdirCandidate) && fs.statSync(workdirCandidate).isFile()) {
+                executable = workdirCandidate
+            } else {
+                try {
+                    executable = execFileSync('which', [executable], { encoding: 'utf8' }).trim()
+                } catch (e) {
+                    // keep original value, spawnBinOrScript will handle the error
+                }
             }
         }
 
@@ -230,13 +239,23 @@ class myplugin extends global.Plugin {
             returns.item = 'executable'
         }
 
-        // Resolve command from PATH for validation only, without modifying the user's input
+        // Resolve command for validation only, without modifying the user's input.
+        // For relative paths, first try to resolve against the Working directory,
+        // then fall back to PATH lookup via `which`.
         let executablePath = props.executable.executable
         if (executablePath && !path.isAbsolute(executablePath)) {
-            try {
-                executablePath = execFileSync('which', [executablePath], { encoding: 'utf8' }).trim()
-            } catch (e) {
-                // which failed - file not found in PATH
+            const workdir = props.executable.workdir
+            const workdirCandidate = workdir && workdir.trim().length > 0
+                ? path.resolve(workdir, executablePath)
+                : null
+            if (workdirCandidate && fs.existsSync(workdirCandidate) && fs.statSync(workdirCandidate).isFile()) {
+                executablePath = workdirCandidate
+            } else {
+                try {
+                    executablePath = execFileSync('which', [executablePath], { encoding: 'utf8' }).trim()
+                } catch (e) {
+                    // which failed - file not found in PATH
+                }
             }
         }
 
